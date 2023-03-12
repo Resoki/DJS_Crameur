@@ -23,20 +23,7 @@ client.aliases = new Collection()
 client.slashCommands = new Collection();
 client.prefix = config.prefix
 
-module.exports = client;
-handler.connectDb();
-
-handler.db.on('error', async(err)=> {
-	console.log('DB error:', err);
-});
-
-//force db to rest ON
-setInterval(async()=> {
-	await handler.db.query('SELECT * FROM word', (err, result)=> {
-			// console.log(result)
-	});
-}, 8000);
-
+module.exports = client;;
 
 [ 'slashCommand', 'events'].forEach((handler) => {
   require(`./handlers/${handler}`)(client)

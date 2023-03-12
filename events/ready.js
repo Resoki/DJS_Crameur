@@ -1,11 +1,5 @@
 const client = require('..');
 const chalk = require('chalk');
-const { EmbedBuilder, Collection, PermissionsBitField, ButtonBuilder, ButtonStyle, ActionRowBuilder } = require('discord.js')
-const sdk = require('api')('@opensea/v1.0#mxj1ql5k6c0il');
-const axios = require('axios');
-const { QuickDB } = require('quick.db');
-const db = new QuickDB(); // using 
-
 client.on("ready", async() => {
 	const activities = [
 		{ name: `Bot DJS`, type: 5 }, // LISTENING
