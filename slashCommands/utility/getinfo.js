@@ -27,7 +27,6 @@ module.exports = {
     try {
       if (!interaction.isCommand()) return;
       const API_KEY = "187ad671573842d2ba512056ec15de9d";
-      const MEMBERSHIP_TYPE = 3; // change to 2 or 4 depending on your platform (Xbox, PSN, or Steam)
       const MEMBERSHIP_ID = "4611686018470076418";
       const memberid = interaction.options.getString("memberid");
 
@@ -55,14 +54,6 @@ module.exports = {
             response.data.Response.entries.forEach((entry) => {
               if (entry.player.destinyUserInfo.membershipId !== MEMBERSHIP_ID)
                 return;
-              console.log(entry.player.destinyUserInfo);
-              console.log(entry.values.assists.basic.value);
-              console.log(entry.values.completed.basic.value);
-              console.log(entry.values.deaths.basic.value);
-              console.log(entry.values.kills.basic.value);
-              console.log(entry.values.efficiency.basic.value);
-              console.log(entry.values.killsDeathsRatio.basic.value);
-              console.log(entry.values.killsDeathsAssists.basic.value);
 
               setNewField = (title, data) => {
                 embed.addFields({
@@ -81,7 +72,6 @@ module.exports = {
               setNewField(`KillDeathsAssists`, entry.values.killsDeathsAssists.basic.value)
               playerName = entry.player.destinyUserInfo.displayName;
               iconPath = entry.player.destinyUserInfo.iconPath;
-              console.log(iconPath.toString())
             });
             
             embed.setAuthor({

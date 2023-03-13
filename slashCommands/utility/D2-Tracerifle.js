@@ -1,9 +1,4 @@
 const axios = require("axios");
-
-const API_KEY = "187ad671573842d2ba512056ec15de9d";
-const MEMBERSHIP_TYPE = 3; // change to 2 or 4 depending on your platform (Xbox, PSN, or Steam)
-const MEMBERSHIP_ID = "4611686018470076418";
-
 const {
   ApplicationCommandType,
   ApplicationCommandOptionType,
@@ -35,7 +30,7 @@ module.exports = {
       async function getRaidCompletions() {
         try {
           const response = await axios.get(
-            `https://www.bungie.net/Platform/Destiny2/3/Account/4611686018470076418/Character/0/Stats/?groups=102&modes=4&periodType=AllTime`,
+            `https://www.bungie.net/Platform/Destiny2/3/Account/${memberid}/Character/0/Stats/?groups=102&modes=4&periodType=AllTime`,
             {
               headers: {
                 "X-API-Key": API_KEY,

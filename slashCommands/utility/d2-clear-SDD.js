@@ -1,11 +1,18 @@
-const axios = require("axios");
+const fetch = require("node-fetch");
 const {
   ApplicationCommandType,
   ApplicationCommandOptionType,
 } = require("discord.js");
 
+const RAIDS = [
+  {
+    hash: 2168422218,
+    name: "Vow of the Disciple",
+  },
+];
+
 module.exports = {
-  name: "type",
+  name: "clear-sdd",
   description: "Type",
   type: ApplicationCommandType.ChatInput,
   category: "utility",
@@ -24,11 +31,10 @@ module.exports = {
       const memberid = interaction.options.getString("memberid");
 
       const API_KEY = "187ad671573842d2ba512056ec15de9d";
-
       async function getRaidCompletions() {
         try {
-          const response = await axios.get(
-            `https://www.bungie.net/Platform/Destiny2/3/Account/${memberid}/Character/0/Stats/?groups=102&modes=4&periodType=AllTime`,
+          let request = await fetch(
+            `https://www.bungie.net/Platform/Destiny2/3/Profile/${memberid}/?components=900`,
             {
               headers: {
                 "X-API-Key": API_KEY,
@@ -36,12 +42,24 @@ module.exports = {
             },
           );
 
-          if (response.data.ErrorCode === 1) {
-            interaction.reply(
-              response.data.Response.raid.allTime.weaponBestType.basic.value.toString(),
-            );
+          request = await request.json();
+
+          if (request.ErrorCode === 1) {
+
+            RAIDS.forEach((raid) => {
+              let objectives =
+                request.Response.profileRecords.data.records[raid.hash]
+                  .objectives ?? undefined;
+              if (objectives) {
+                interaction.channel.send(
+                  `${raid.name}: ${JSON.stringify(
+                    objectives[0].progress,
+                  )} completions`,
+                );
+              }
+            });
           } else {
-            console.error(`Error: ${response.data.Message}`);
+            console.error(`Error: ${JSON.stringify(request.Message)}`);
           }
         } catch (error) {
           console.error(error);

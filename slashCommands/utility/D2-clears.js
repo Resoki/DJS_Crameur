@@ -24,8 +24,6 @@ module.exports = {
       const memberid = interaction.options.getString("memberid");
 
       const API_KEY = "187ad671573842d2ba512056ec15de9d";
-      const MEMBERSHIP_TYPE = 3; // change to 2 or 4 depending on your platform (Xbox, PSN, or Steam)
-      const MEMBERSHIP_ID = "4611686018470076418";
 
       async function getRaidCompletions() {
         try {
