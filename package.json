@@ -29,6 +29,7 @@
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.9",
     "nodemon": "^2.0.19",
+    "quick.db": "^9.0.8",
     "quickmongo": "^5.2.0",
     "undici": "^5.10.0"
   }
