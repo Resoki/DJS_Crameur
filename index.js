@@ -56,11 +56,9 @@ const driver = new MongoDriver("mongodb+srv://Resoki:Ballon32%2F@cluster0.nsmmcu
 driver.connect().then(async() => {
 	const db = new QuickDB({ driver });
     console.log(`Connected to the database!`);
-    await db.set('users_82992', {
-		userId: 10922,
-		points: 0,
-		name: 'Resoki'
-	}).then((res)=> console.log('set to db'))
+      console.log(await db.get("usersList"))
+     //await db.set("usersList", []);
+     await driver.close()
 });
 
 client.login(token);

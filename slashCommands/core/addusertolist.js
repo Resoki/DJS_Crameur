@@ -3,13 +3,11 @@ const { MongoDriver } = require("quickmongo");
 const driver = new MongoDriver(
   "mongodb+srv://Resoki:Ballon32%2F@cluster0.nsmmcu2.mongodb.net/test?retryWrites=true&w=majority",
 );
-const axios = require("axios");
 const fetch = require("node-fetch");
 
 const {
   ApplicationCommandType,
   ApplicationCommandOptionType,
-  EmbedBuilder,
 } = require("discord.js");
 
 const isEmptyUsersList = async () => {
@@ -26,8 +24,12 @@ const userAlreadyExist = async (memberId) => {
     if (isEmptyUsersListConst) return false;
     const array = await db.get("usersList");
     if (!array.length) return false;
+    await driver.close()
     return array && array.find((el) => el.memberId === memberId) ? true : false;
-  });
+  })
+  .catch(async(err)=> {
+    await driver.close()
+  })
 };
 
 const addUserToList = async (member, arg, memberType, raidArray) => {
@@ -42,10 +44,14 @@ const addUserToList = async (member, arg, memberType, raidArray) => {
       memberId: arg,
       memberType: memberType,
       newTab: raidArray,
+      nbRaid: 0,
     });
     
     await db.set("usersList", usersList);
-  });
+    await driver.close();
+  }).catch(async(err)=> {
+    await driver.close();
+  })
 };
 
 module.exports = {

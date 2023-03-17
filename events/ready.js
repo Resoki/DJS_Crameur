@@ -24,6 +24,8 @@ client.on("ready", async () => {
   setInterval(() => {
     requeteData();
   }, 5000);
+
+  
 });
 
 const RAID = [
@@ -71,6 +73,10 @@ const RAID = [
     hash: 3047702042,
     name: "King's Fall",
   },
+  // {
+  //   hash: 2381413764,
+  //   name: "Root of Nightmares",
+  // },
 ];
 
 const requeteData = async () => {
@@ -87,9 +93,8 @@ const requeteData = async () => {
     return await db.get("usersList");
   };
   const API_KEY = "187ad671573842d2ba512056ec15de9d";
-
   const userList = await seeUsersList();
-  console.log(userList)
+  await driver.close()
   for (let i = 0; i < userList.length; i++) {
     let request = await fetch(
       `https://www.bungie.net/Platform/Destiny2/${userList[i].memberType}/Profile/${userList[i].memberId}/?components=900`,
@@ -101,7 +106,6 @@ const requeteData = async () => {
     );
 
     request = await request.json();
-
     if (request.ErrorCode === 1) {
       let totalPoints = [];
       RAID.forEach((raid) => {
@@ -112,7 +116,6 @@ const requeteData = async () => {
           let points = objectives[0].progress;
           totalPoints.push(points);
           let raidCompletionPoints = [];
-          console.log(raid.name, points);
           raidCompletionPoints.push({ raidName: raid.name, points });
         }
       });
@@ -136,47 +139,80 @@ const updateUserNewTabValue = async (memberId, newTabValue) => {
     const db = new QuickDB({ driver });
     const userList = await db.get("usersList");
     const user = userList.find((user) => user.memberId === memberId);
-    console.log(user)
+
     if (user) {
       const currentNewTabValue = user.newTab;
 
-      const lastNewTabValue = lastNewTabValues[memberId];
-      console.log('currentNewTabValue', currentNewTabValue)
-      let newTab = [ 56, 43, 230, 18, 7, 5 ];
-      if (currentNewTabValue < newTab) {
+      //let newTab = [ 56, 43, 230, 18, 8, 10 ];
+      if (currentNewTabValue < newTabValue) {
         lastNewTabValues[memberId] = newTabValue;
         console.log(
           `New value for user ${user.usernameDiscord}: newTab increased from ${currentNewTabValue} to ${newTabValue}`,
         );
-        await db.set("usersList", {
-          ...user,
-          newTab: newTabValue,
-        });
+        await db.set("usersList", {...user,newTab: newTabValue});
       }
-      checkWichRaidCompleted(currentNewTabValue, newTab, user.usernameDiscord)
+      checkWichRaidCompleted(currentNewTabValue, newTabValue, user);
     }
-  });
+    await driver.close();
+  })
+  .catch(async(err)=> {
+    await driver.close();
+  })
 };
+
+const increaseNumberOfRaidUser = async (memberId) => {
+  await driver.connect().then(async () => {
+    const db = new QuickDB({ driver });
+  
+    let usersList = await db.get("usersList");
+    
+    const userIndex = usersList.findIndex(el => el.memberId === memberId);
+    
+    if (userIndex === -1) {
+      console.log(`User with Discord ID ${memberId} not found.`);
+      await driver.close();
+      return;
+    }
+    
+    usersList[userIndex].nbRaid += 1;
+    
+    await db.set("usersList", usersList);
+    await driver.close();
+  }).catch(async(err)=> {
+    console.error(`Error increasing raid count for user with Discord ID ${memberId}: ${err}`);
+    await driver.close();
+  })
+}
 
 
 const checkWichRaidCompleted = (array1, array2, user) => {
   let changedIndexes = [];
+  if(array1 === array2) return
   
   for (let i = 0; i < array1.length; i++) {
-    if (array1[i] !== array2[i]) {
-      changedIndexes.push(i);
-    }
+    if (array1[i] !== array2[i]) changedIndexes.push(i);
   }
-  let str = ''
-  console.log(changedIndexes)
+  let str = '';
+  if(!changedIndexes[0]) return;
   switch(changedIndexes[0]) {
-    case 0: return str += 'Last Wish';
-    case 1: return str +='Garden of Salvation';
-    case 2: return str+='Deep Stone Crypt';
-    case 3: return str+='Vault of Glass';
-    case 4: return str+='Vow of the Disciple';
-    case 5: return str+=`King's fall`;
+    case 0:  str += 'Last Wish';
+    break;
+    case 1:  str +='Garden of Salvation';
+    break;
+    case 2:  str+='Deep Stone Crypt';
+    break;
+    case 3:  str+='Vault of Glass';
+    break;
+    case 4:  str+='Vow of the Disciple';
+    break;
+    case 5:  str+=`King's fall`;
+    break;
   }
-  
-  console.log(`${user} vient de compléter un raid ${str}`)
+
+  if(str) {
+    const channel = client.channels.cache.get('965590551799943248');
+    console.log(`${user.usernameDiscord} vient de compléter un raid ${str}`);
+    channel.send(`${user.usernameDiscord} vient de compléter un raid ${str}`);
+    increaseNumberOfRaidUser(user.memberId);
+  }
 }

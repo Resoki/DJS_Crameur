@@ -16,7 +16,9 @@ const isEmptyUsersList = async () => {
 const seeUsersList = async () => {
   await driver.connect();
   const db = new QuickDB({ driver });
-  return await db.get("usersList");
+  const usersList = await db.get("usersList");
+  await driver.close();
+  return usersList;
 };
 
 module.exports = {
@@ -30,11 +32,9 @@ module.exports = {
     if (isEmpty) return interaction.channel.send("> Pas de membre enregistré");
 
     const usersList = await seeUsersList();
-    const limit = 10;
     const embed = new EmbedBuilder().setTitle(
       `${usersList.length} ids enregistrés !`,
     );
-
     for (let i = 0; i < usersList.length; i++) {
         const el = usersList[i];
         console.log(el.usernameDiscord, el.memberId)

@@ -65,8 +65,6 @@ const loadCommands = async function (client) {
  * Load SlashCommands
  */
 const loadSlashCommands = async function (client) {
-    let slash = []
-
     const commandFolders = fs.readdirSync("./slashCommands");
     for (const folder of commandFolders) {
         const commandFiles = fs

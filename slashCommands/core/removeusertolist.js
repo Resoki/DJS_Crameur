@@ -7,7 +7,6 @@ const driver = new MongoDriver(
 const {
   ApplicationCommandType,
   ApplicationCommandOptionType,
-  EmbedBuilder,
 } = require("discord.js");
 
 const isEmptyUsersList = async () => {
@@ -20,7 +19,8 @@ const isEmptyUsersList = async () => {
 const removeUserToList = async (arg, interaction) => {
   await driver.connect().then(async () => {
     const db = new QuickDB({ driver });
-    const userList = await db.get("usersList");
+    const userList = await db.get("usersList")
+    await db.delete('usersList').then(() =>  console.log('supp'));
     const indexToRemove = userList.findIndex((user) => user.memberId === arg);
     if (indexToRemove === -1) {
       return interaction.channel.send(
@@ -29,10 +29,13 @@ const removeUserToList = async (arg, interaction) => {
     }
     userList.splice(indexToRemove, 1);
     await db.set("usersList", userList);
+    await driver.close()
     return interaction.channel.send(
       `> L'id **${arg}** a été retiré à la bdd de la liste.`,
     );
-  });
+  }).catch(async(err)=> {
+    await driver.close()
+  })
 };
 
 module.exports = {
