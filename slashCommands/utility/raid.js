@@ -10,6 +10,14 @@ module.exports = {
   type: ApplicationCommandType.ChatInput,
   category: "utility",
   cooldown: 3000,
+  options: [
+    {
+      name: "memberid",
+      description: "Id du membre",
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+  ],
   run: async (client, interaction) => {
     try {
       if (!interaction.isCommand()) return;
@@ -77,7 +85,7 @@ module.exports = {
       async function getRaidCompletions() {
         try {
           let request = await fetch(
-            `https://www.bungie.net/Platform/Destiny2/${MEMBERSHIP_TYPE}/Profile/${MEMBERSHIP_ID}/?components=900`,
+            `https://www.bungie.net/Platform/Destiny2/${MEMBERSHIP_TYPE}/Profile/${memberId}/?components=900`,
             {
               headers: {
                 "X-API-Key": API_KEY,

@@ -51,7 +51,7 @@ module.exports = client;
 const { QuickDB } = require("quick.db");
 // get mongo driver
 const { MongoDriver } = require("quickmongo");
-const driver = new MongoDriver("mongodb+srv://Resoki:Ballon32%2F@cluster0.nsmmcu2.mongodb.net/test?retryWrites=true&w=majority");
+const driver = new MongoDriver("mongodb+srv://crameur91:Voiture32%2F%2F%2F%2F@projet-bot.frrevjh.mongodb.net/");
 
 driver.connect().then(async() => {
 	const db = new QuickDB({ driver });

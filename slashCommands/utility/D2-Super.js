@@ -2,6 +2,7 @@
 
 
 const axios = require("axios");
+
 const {
   ApplicationCommandType,
   ApplicationCommandOptionType,
@@ -14,6 +15,12 @@ module.exports = {
   category: "utility",
   cooldown: 3000,
   options: [
+    {
+      name: "typeid",
+      description: "Id du membre",
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
     {
       name: "memberid",
       description: "Id du membre",
@@ -30,11 +37,8 @@ module.exports = {
 
       async function getRaidCompletions() {
         try {
-          const response = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Account/${memberid}/Character/0/Stats/?groups=102&modes=4&periodType=AllTime`, {
-      headers: {
-        'X-API-Key': API_KEY
-      }
-    });
+          const response = await axios.get(`https://www.bungie.net/Platform/Destiny2/${typeid}/Account/${memberid}/Character/0/Stats/?groups=102&modes=4&periodType=AllTime`, {
+      headers: {'X-API-Key': API_KEY}});
           if (response.data.ErrorCode === 1) {
             interaction.reply(
               `Super: ${response.data.Response.raid.allTime.weaponKillsSuper.basic.value.toString()}`

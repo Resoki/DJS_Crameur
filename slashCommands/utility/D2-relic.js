@@ -16,6 +16,12 @@ module.exports = {
   cooldown: 3000,
   options: [
     {
+      name: "typeid",
+      description: "Id du membre",
+      type: ApplicationCommandOptionType.String,
+      required: true,
+    },
+    {
       name: "memberid",
       description: "Id du membre",
       type: ApplicationCommandOptionType.String,
@@ -26,13 +32,14 @@ module.exports = {
     try {
       if (!interaction.isCommand()) return;
       const memberid = interaction.options.getString("memberid");
+      const typeid = interaction.options.getString("typeid");
 
       const API_KEY = "187ad671573842d2ba512056ec15de9d";
       const MEMBERSHIP_ID = "4611686018470076418";
 
       async function getRaidCompletions() {
         try {
-          const response = await axios.get(`https://www.bungie.net/Platform/Destiny2/3/Account/${memberid}/Character/0/Stats/?groups=102&modes=4&periodType=AllTime`, {
+          const response = await axios.get(`https://www.bungie.net/Platform/Destiny2/${typeid}/Account/${memberid}/Character/0/Stats/?groups=102&modes=4&periodType=AllTime`, {
             headers: {
               'X-API-Key': API_KEY
             }
